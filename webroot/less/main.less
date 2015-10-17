@@ -1,0 +1,208 @@
+// out:../css/main.css, compress:true
+
+@import "../bootstrap/less/bootstrap.less";
+@import "../bootstrap/less/theme.less";
+
+.chat-header {
+    margin-top:0px;
+    margin-bottom:0px;
+    border:0px;
+
+    @media (max-width: @screen-sm-max) {
+        padding-top:0px;
+    }
+
+    @media (min-width: @screen-md-min) {
+        padding-top:40px;
+    }
+
+    &.status {
+        &-online {
+            background-color:lighten(@brand-primary, 40%);
+        }
+        &-offline {
+            background-color:@brand-warning;
+        }
+    }
+}
+
+.chat-box {
+    padding-top:20px;
+    padding-bottom:20px;
+
+    &.status {
+        &-online {
+            background-color:lighten(@brand-primary, 50%);
+        }
+        &-offline {
+            background-color:lighten(@brand-warning, 10%);
+        }
+    }
+}
+
+.chat-form {
+    position:fixed;
+    left:0px;
+    right:0px;
+    box-shadow:0px 0px 20px #AAA;
+}
+
+.chat-history {
+    @media (max-width: @screen-sm-max) {
+        margin-top:160px;
+    }
+
+    @media (min-width: @screen-md-min) {
+        margin-top:200px;
+    }
+}
+
+.chat-message {
+    max-width:100%;
+
+    &, &-sender, &-body {
+        width: intrinsic;           /* Safari/WebKit uses a non-standard name */
+        width: -moz-max-content;    /* Firefox/Gecko */
+        width: -webkit-max-content; /* Chrome */
+    }
+
+    &-left {
+        margin-left:0px;
+        margin-right:auto;
+    }
+
+    &-right {
+        margin-left:auto;
+        margin-right:0px;
+    }
+}
+
+.btn-logout {
+    @media (max-width: @screen-sm-max) {
+        position:fixed;
+        top:0px;
+        right:0px;
+        z-index:10;
+        border-top-right-radius:0px;
+        border-top-left-radius:0px;
+        border-bottom-right-radius:0px;
+    }
+
+    @media (min-width: @screen-md-min) {
+        .pull-right();
+    }
+}
+
+
+
+
+.form-signin
+{
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+.form-signin .form-signin-heading, .form-signin .checkbox
+{
+    margin-bottom: 10px;
+}
+.form-signin .checkbox
+{
+    font-weight: normal;
+}
+.form-signin .form-control
+{
+    position: relative;
+    font-size: 16px;
+    height: auto;
+    padding: 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.form-signin .form-control:focus
+{
+    z-index: 2;
+}
+.form-signin input[type="text"]
+{
+    margin-bottom: -1px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.form-signin input[type="password"]
+{
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.account-wall
+{
+    margin-top: 20px;
+    padding: 0px 0px 20px 0px;
+    background-color: #f7f7f7;
+    box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.3);
+    border-radius:10px;
+}
+.login-title
+{
+    color: #555;
+    font-size: 18px;
+    font-weight: 400;
+    display: block;
+    margin:0px;
+    padding-top:20px;
+    .bg-primary();
+    border-radius:10px 10px 0px 0px;
+
+    h1 {
+        padding:0px;
+        margin:0px;
+    }
+}
+.register-title
+{
+    color: #555;
+    font-size: 18px;
+    font-weight: 400;
+    display: block;
+    margin:0px;
+    padding-top:20px;
+    .bg-warning();
+    border-radius:10px 10px 0px 0px;
+
+    h1 {
+        padding:0px;
+        margin:0px;
+    }
+}
+.profile-img
+{
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 10px;
+    display: block;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+}
+.need-help
+{
+    margin-top: 10px;
+}
+.new-account
+{
+    display: block;
+    margin-top: 10px;
+}
+.flexbox-centering {
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    position:fixed;
+    top:0px;
+    left:0px;
+    right:0px;
+    bottom:0px;
+    overflow:auto;
+}

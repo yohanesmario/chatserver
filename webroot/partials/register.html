@@ -1,0 +1,27 @@
+<div class="flexbox-centering">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-md-4 col-md-offset-4">
+                <script type="text/ng-template" id="alert.html">
+                    <div class="alert" style="background-color:#fa39c3;color:white" role="alert">
+                      <div ng-transclude></div>
+                    </div>
+                </script>
+                <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+                <div class="account-wall">
+                    <div class="page-header register-title">
+                        <h1 class="text-center">New Account</h1>
+                    </div>
+                    <form class="form-signin" ng-submit="registerButton();">
+                        <input type="text" autocomplete="off" class="form-control" placeholder="Username" ng-model="username" required autofocus>
+                        <input type="password" autocomplete="off" class="form-control" placeholder="Password" ng-model="password" required>
+                        <button class="btn btn-lg btn-warning btn-block" type="submit">
+                            Register
+                        </button>
+                    </form>
+                    <a href="#/login" class="text-center new-account text-warning">Sign in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

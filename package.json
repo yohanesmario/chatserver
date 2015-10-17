@@ -1,0 +1,36 @@
+{
+  "name": "chatserver",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "JASON": "^0.1.3",
+    "async": "^1.4.2",
+    "colors": "^1.1.2",
+    "fs": "0.0.2",
+    "http": "0.0.0",
+    "jslint": "^0.9.3",
+    "lokijs": "^1.3.10",
+    "mime-types": "^2.1.7",
+    "mongodb": "^2.0.45",
+    "nodelint": "^0.6.2",
+    "prompt": "^0.2.14",
+    "querystring": "^0.2.0",
+    "rwlock": "^5.0.0",
+    "throng": "^1.0.1",
+    "url": "^0.11.0",
+    "webworker-threads": "^0.6.2",
+    "winston": "^1.1.0",
+    "xml2js": "^0.4.12"
+  },
+  "devDependencies": {},
+  "description": "Kontributor:\r * Yohanes Mario Chandra (2011730031)\r * Aswin Sebastian Hanes (2011730059)\r * Reanta Indra Putra Pratama (2011730079)",
+  "directories": {
+    "doc": "docs"
+  }
+}

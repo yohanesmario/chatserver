@@ -1,0 +1,53 @@
+<div class="chat-form">
+    <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <button type="button" class="close"><span aria-hidden="true" ng-click="cancel()">&times;</span></button>
+            <h3 class="modal-title">Alert!</h3>
+        </div>
+        <div class="modal-body">
+            {{alertMessage}}
+        </div>
+    </script>
+    <div class="page-header chat-header status-{{connectionStatus}}">
+        <div class="container">
+            <button class="btn btn-danger btn-logout" type="button" name="button" ng-click="logoutButton();">
+                <span class="glyphicon glyphicon-log-out"></span>
+                Logout
+            </button>
+            <h3>
+                <span class="text-primary">{{username}}</span>
+            </h3>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="chat-box status-{{connectionStatus}}">
+        <div class="container">
+            <form ng-submit="submitAction();">
+                <div class="input-group">
+                    <input id="submitDisabled" autocomplete="off" class="form-control" placeholder="{{placeholder}}" type="text" name="text" ng-model="draft" autofocus required>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit" name="submit">
+                            <span class="glyphicon glyphicon-send"></span>
+                            &nbsp;
+                            Send
+                        </button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="chat-history">
+        <div class="panel panel-{{message.color}} chat-message chat-message-{{message.position}}" ng-repeat="message in messages | orderBy:'-time'">
+            <div class="panel-heading chat-message-sender">
+                <strong>{{message.sender}}</strong>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="pull-right" title="{{message.timezone}}"><small><small>{{message.displayedTime}}</small></small></span>
+            </div>
+            <div class="panel-body chat-message-body">
+                {{message.body}}
+            </div>
+        </div>
+    </div>
+</div>
