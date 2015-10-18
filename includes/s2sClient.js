@@ -132,7 +132,7 @@ var s2sClient = {
                     };
 
                     for (var i = 0; i < data.response.servers[0].server.length; i++) {
-                        if (data.response.servers[0].server[i].$.ip!=cfg.identifier.ip || parseInt(data.response.servers[0].server[i].$.port)!=cfg.identifier.port) {
+                        if (data.response.servers[0].server[i].$.ip!=cfg.identifier.ip || parseInt(data.response.servers[0].server[i].$.port)!=parseInt(cfg.identifier.port)) {
                             s2sClient.registerServer(
                                 data.response.servers[0].server[i].$.ip,
                                 data.response.servers[0].server[i].$.port,
@@ -150,6 +150,8 @@ var s2sClient = {
                                     });
                                 }
                             );
+                        } else {
+                            maxCount--;
                         }
                     }
                 } else {
@@ -169,6 +171,18 @@ var s2sClient = {
         });
     },
     registerServer:function(host, port, hash, cb, errorCB){
+        var ipPort = host+":"+port;
+        s2sClient.dbWrapper.servers.insert({
+            "ipPort":ipPort,
+            "ip":host,
+            "port":parseInt(port),
+            "password":hash,
+            "loggedIn":false,
+            "sessid":null,
+            "mysessid":null,
+            "heartbeat":null
+        });
+
         var data = xmlBuilder.buildObject({
             request:{
                 $:{type:"s2s"},
@@ -183,17 +197,6 @@ var s2sClient = {
             }
         });
         s2sClient.post(host, port, data, function(result){
-            var ipPort = host+":"+port;
-            s2sClient.dbWrapper.servers.insert({
-                "ipPort":ipPort,
-                "ip":host,
-                "port":parseInt(port),
-                "password":hash,
-                "loggedIn":false,
-                "sessid":null,
-                "mysessid":null,
-                "heartbeat":null
-            });
             cb(host, port, result);
         }, function(e){
             if (errorCB==null) {
@@ -345,6 +348,39 @@ var s2sClient = {
             s2sClient.post(srv[i].ip, srv[i].port, data, cb, function(e){
                 logWrapper.log('problem with request: ' + e.message);
             });
+        }
+    },
+    logoutServer:function(cb, error){
+        var srv = s2sClient.dbWrapper.servers.find({"$and":[
+            {"loggedIn":true},
+            {"mysessid":{"$ne":null}}
+        ]});
+        for (var i = 0; i < srv.length; i++) {
+            var data = xmlBuilder.buildObject({
+                request:{
+                    $:{type:"s2s"},
+                    "method":["logoutServer"],
+                    "param":[{
+                        "$":{
+                            "sessid":srv[i].mysessid
+                        }
+                    }]
+                }
+            });
+
+            s2sClient.post(srv[i].ip, srv[i].port, data, cb, function(e){
+                if (error!=null) {
+                    error(e);
+                } else {
+                    logWrapper.log('problem with request: ' + e.message);
+                }
+            });
+
+            srv[i].loggedIn = false;
+            srv[i].sessid = null
+            srv[i].mysessid = null
+            srv[i].heartbeat = null;
+            s2sClient.dbWrapper.servers.update(srv[i]);
         }
     }
 };

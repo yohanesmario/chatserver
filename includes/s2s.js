@@ -710,7 +710,93 @@ var s2sObj = {
         }
     },
     logoutServer:function(request, response){
+        var requestID;
+        if (cluster.isMaster) {
+            requestID = request.reqID;
+            var workerID = request.workerID;
+            request = request.data;
 
+            var res = s2sObj.dbWrapper.servers.find({"sessid":request.param[0].$.sessid});
+            if (res!=null && res.length==1) {
+                res[0].loggedIn = false;
+                res[0].sessid = null
+                res[0].mysessid = null
+                res[0].heartbeat = null;
+                var usrRes = s2sObj.dbWrapper.users.find({"handlerIpPort":res[0].ipPort});
+                if (usrRes!=null && usrRes.length>0) {
+                    for (var i = 0; i < usrRes.length; i++) {
+                        usrRes[i].loggedIn = false;
+                        usrRes[i].handledByMe = false;
+                        usrRes[i].heartbeat = null;
+                        usrRes[i].handlerIpPort = null;
+                        usrRes[i].sessid = null;
+                        s2sObj.dbWrapper.users.update(usrRes[i]);
+                    }
+                }
+                s2sObj.dbWrapper.servers.update(res[0]);
+                cluster.workers[workerID].send({
+                    messageType:"s2sWorker",
+                    payload:{
+                        reqID:requestID,
+                        header:{'Content-Type': 'text/plain'},
+                        data:{
+                            response:{
+                                "$":{"type":"s2s"},
+                                "status":["accepted"],
+                                "status-code":[1]
+                            }
+                        }
+                    }
+                });
+            } else {
+                cluster.workers[workerID].send({
+                    messageType:"s2sWorker",
+                    payload:{
+                        reqID:requestID,
+                        header:{'Content-Type': 'text/plain'},
+                        data:{
+                            response:{
+                                "$":{"type":"s2s"},
+                                "status":["rejected"],
+                                "status-code":[3],
+                                "message":["session expired"]
+                            }
+                        }
+                    }
+                });
+            }
+        } else {
+            if (request!=null && request.param!=null && request.param.length==1 && request.param[0].$!=null && request.param[0].$.sessid!=null) {
+                requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
+
+                s2sObj.dbWrapper.callbackHashTable['s2sWorker'+requestID] = function(data){
+                    var header = data.header;
+                    var res = data.data;
+                    response.writeHead(200, "OK", header);
+                    response.end(xmlBuilder.buildObject(res));
+
+                    delete s2sObj.dbWrapper.callbackHashTable['s2sWorker'+requestID];
+                };
+                process.send({
+                    messageType:"s2sMaster",
+                    payload:{
+                        workerID:cluster.worker.id,
+                        reqID:requestID,
+                        data:request
+                    }
+                });
+            } else {
+                response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
+                response.end(xmlBuilder.buildObject({
+                    response:{
+                        $:{type:"s2s"},
+                        "status":["rejected"],
+                        "status-code":[13],
+                        "message":["Parameter read failed."]
+                    }
+                }));
+            }
+        }
     },
     serverHeartbeat:function(request, response){
         var requestID;
