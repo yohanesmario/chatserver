@@ -20,7 +20,7 @@ module.exports.init = function(cfg) {
 };
 module.exports.queueC2SWorkerChatSend = function(obj){
     sendingQueue.push(obj);
-    if (c2sWorkerChatSendStarted==false) {
+    if (c2sWorkerChatSendStarted===false) {
         c2sWorkerChatSendStarted = true;
         async.setImmediate(function(){
             module.exports.c2sWorkerChatSend();
@@ -43,7 +43,7 @@ module.exports.c2sWorkerChatSend = function(){
 };
 module.exports.queueSaving = function(){
     // MANTRA: Event-loop will never have race-condition. We are still inside of event-loop. :)
-    if (savingQueue==false && module.exports.db!=null) { // No queue, means no pending save
+    if (savingQueue===false && module.exports.db!=null) { // No queue, means no pending save
         savingQueue = true;
         async.setImmediate(function(){
             module.exports.execSaving();
@@ -52,7 +52,7 @@ module.exports.queueSaving = function(){
 };
 module.exports.execSaving = function(){
     // MANTRA: Event-loop will never have race-condition. We are still inside of event-loop. :)
-    if (savingQueue==true && savingExec==false && module.exports.db!=null) { // There's queue, please execute save
+    if (savingQueue===true && savingExec===false && module.exports.db!=null) { // There's queue, please execute save
         savingExec = true;
         savingQueue = false;
         module.exports.db.saveDatabase(function(){
@@ -67,13 +67,13 @@ module.exports.flush = function(cb) {
     var iteration = 0;
     module.exports.logoutAllUsers(function(){
         iteration++;
-        if (cb!=null && iteration==2) {
+        if (cb!=null && iteration===2) {
             cb();
         }
     });
     module.exports.removeAllServers(function(){
         iteration++;
-        if (cb!=null && iteration==2) {
+        if (cb!=null && iteration===2) {
             cb();
         }
     });
@@ -82,19 +82,19 @@ module.exports.drop = function(cb) {
     var iteration = 0;
     module.exports.removeAllUsers(function(){
         iteration++;
-        if (cb!=null && iteration==3) {
+        if (cb!=null && iteration===3) {
             cb();
         }
     });
     module.exports.deleteAllMessages(function(){
         iteration++;
-        if (cb!=null && iteration==3) {
+        if (cb!=null && iteration===3) {
             cb();
         }
     });
     module.exports.removeAllServers(function(){
         iteration++;
-        if (cb!=null && iteration==3) {
+        if (cb!=null && iteration===3) {
             cb();
         }
     });
@@ -109,7 +109,7 @@ module.exports.logoutAllUsers = function(cb){
         async.setImmediate(function(){
             callback();
         });
-    }, function(err) {
+    }, function() {
         module.exports.queueSaving();
         async.setImmediate(function(){
             if (cb!=null) {
@@ -127,7 +127,7 @@ module.exports.removeAllUsers = function(cb){
         async.setImmediate(function(){
             callback();
         });
-    }, function(err) {
+    }, function() {
         module.exports.queueSaving();
         async.setImmediate(function(){
             if (cb!=null) {
@@ -145,7 +145,7 @@ module.exports.deleteAllMessages = function(cb){
         async.setImmediate(function(){
             callback();
         });
-    }, function(err) {
+    }, function() {
         module.exports.queueSaving();
 
         for (var key in cluster.workers) {
@@ -170,7 +170,7 @@ module.exports.removeAllServers = function(cb){
         async.setImmediate(function(){
             callback();
         });
-    }, function(err) {
+    }, function() {
         module.exports.queueSaving();
 
         async.setImmediate(function(){
@@ -201,7 +201,7 @@ module.exports.loadDatabase = function(callback){
             module.exports.users.ensureUniqueIndex('ipPort');
             module.exports.users.ensureIndex('sessid');
         }
-        if (module.exports.cfg.persistDB==true) {
+        if (module.exports.cfg.persistDB===true) {
             module.exports.flush(function(){
                 module.exports.queueSaving();
             });

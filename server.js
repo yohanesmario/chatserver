@@ -32,7 +32,7 @@ if (cluster.isMaster) {
 
         var workerStartedCallback = function(){
             workerCount++;
-            if (workerCount==numWorkers) {
+            if (workerCount===numWorkers) {
                 if (cfg.serverHook!=null) {
                     s2sClient.initConnection(cfg, function(){
                         console.log("\nREADY\n");
@@ -74,7 +74,7 @@ if (cluster.isMaster) {
             worker.on('message', workerMessageCallback);
         }
 
-        cluster.on('exit', function(worker, code, signal) {
+        cluster.on('exit', function(worker) {
             var newWorker = cluster.fork();
             logWrapper.log('worker ' + worker.id + ' [' + worker.process.pid + '] died.');
             logWrapper.log('worker ' + newWorker.id  + ' [' + newWorker.process.pid + '] created.');

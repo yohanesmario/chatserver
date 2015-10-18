@@ -4,7 +4,6 @@ var ifaces = os.networkInterfaces();
 var cluster = require('cluster');
 var crypto = require('crypto');
 var sha512 = null;
-var logWrapper = require('./logWrapper.js');
 
 var objectSize = function(obj){
     var size = 0;
@@ -56,7 +55,7 @@ module.exports.init = function(processObj) {
                     for (var key in ifaces) {
                         if (ifaces.hasOwnProperty(key)) {
                             for (var i = 0; i < ifaces[key].length; i++) {
-                                if (ifaces[key][i].family=='IPv4' && ifaces[key][i].address!='127.0.0.1') {
+                                if (ifaces[key][i].family==='IPv4' && ifaces[key][i].address!=='127.0.0.1') {
                                     identifier.ip = ifaces[key][i].address;
                                 }
                             }

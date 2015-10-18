@@ -1,4 +1,3 @@
-var logWrapper = require('./logWrapper.js');
 var cluster = require('cluster');
 var crypto = require('crypto');
 var sha512 = null;
@@ -58,7 +57,7 @@ var s2sObj = {
 
             var res = s2sObj.dbWrapper.servers.find({"ipPort": ipPort});
 
-            if (res!=null && res.length>0 && res[0].ipPort==ipPort) {
+            if (res!=null && res.length>0 && res[0].ipPort===ipPort) {
                 // Already registered
                 cluster.workers[workerID].send({
                     messageType:"s2sWorker",
@@ -103,7 +102,7 @@ var s2sObj = {
                 });
             }
         } else { // WORKER BRANCH
-            if (request!=null && request.param!=null && request.param.length==1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.ip!=null && request.param[0].$.port!=null && request.param[0].$.password!=null) {
+            if (request!=null && request.param!=null && request.param.length===1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.ip!=null && request.param[0].$.port!=null && request.param[0].$.password!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
                 sha512 = crypto.createHash('sha512');
                 sha512.update(request.param[0].$.password);
@@ -151,9 +150,9 @@ var s2sObj = {
 
             var res = s2sObj.dbWrapper.servers.find({'ipPort':ipPort});
 
-            if (res!=null && res.length==1 && res[0].ipPort==ipPort) {
-                if (res[0].password==hash) {
-                    if (res[0].loggedIn!=true) {
+            if (res!=null && res.length===1 && res[0].ipPort===ipPort) {
+                if (res[0].password===hash) {
+                    if (res[0].loggedIn!==true) {
                         res[0].loggedIn = true;
                         res[0].sessid = sessid;
                         res[0].heartbeat = Date.now();
@@ -162,7 +161,8 @@ var s2sObj = {
                         var usrRes = s2sObj.dbWrapper.users.find({'$loki':{'$gt':-Infinity}});
                         var messages = [];
                         var usersBucket = [];
-                        for (var i = 0; i < msgRes.length; i++) {
+                        var i;
+                        for (i = 0; i < msgRes.length; i++) {
                             messages.push({
                                 "$":{
                                     "username":msgRes[i].username,
@@ -171,7 +171,7 @@ var s2sObj = {
                                 }
                             });
                         }
-                        for (var i = 0; i < usrRes.length; i++) {
+                        for (i = 0; i < usrRes.length; i++) {
                             var handlerIpPort;
                             if (usrRes[i].handlerIpPort!=null) {
                                 handlerIpPort = usrRes[i].handlerIpPort;
@@ -219,7 +219,7 @@ var s2sObj = {
                                     var loginServerCallback = function(r){
                                         parseString(r, function(err, d){
                                             var srv = s2sObj.dbWrapper.servers.find({'ipPort': ipPort});
-                                            if (srv!=null && srv.length==1 && srv[0].mysessid==null) {
+                                            if (srv!=null && srv.length===1 && srv[0].mysessid===null) {
                                                 srv[0].mysessid = d.response.sessid[0];
                                                 s2sObj.dbWrapper.servers.update(srv[0]);
                                             }
@@ -284,7 +284,7 @@ var s2sObj = {
                 });
             }
         } else { // WORKER BRANCH
-            if (request!=null && request.param!=null && request.param.length==1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.ip!=null && request.param[0].$.port!=null && request.param[0].$.password!=null) {
+            if (request!=null && request.param!=null && request.param.length===1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.ip!=null && request.param[0].$.port!=null && request.param[0].$.password!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
                 sessid = request.param[0].$.ip + ":" + request.param[0].$.port + "::w" + cluster.worker.id + "::" + crypto.randomBytes(16).toString('base64');
                 sha512 = crypto.createHash('sha512');
@@ -292,7 +292,6 @@ var s2sObj = {
                 hash = sha512.digest('hex');
 
                 s2sObj.dbWrapper.callbackHashTable['s2sWorker'+requestID] = function(data){
-                    var ipPort = request.param[0].$.ip+":"+request.param[0].$.port;
                     var header = data.header;
                     data = data.data;
                     response.writeHead(200, "OK", header);
@@ -331,7 +330,7 @@ var s2sObj = {
             request = request.data;
 
             var srv = s2sObj.dbWrapper.servers.find({"sessid":request.param[0].$.sessid});
-            if (srv!=null && srv.length==1) {
+            if (srv!=null && srv.length===1) {
                 var res = s2sObj.dbWrapper.users.insert({
                     "username":request.param[0].$.username,
                     "password":request.param[0].$.password,
@@ -342,7 +341,7 @@ var s2sObj = {
                     "handlerIpPort":null
                 });
 
-                if (res!=null && res.username==request.param[0].$.username) {
+                if (res!=null && res.username===request.param[0].$.username) {
                     cluster.workers[workerID].send({
                         messageType:"s2sWorker",
                         payload:{
@@ -392,7 +391,7 @@ var s2sObj = {
                 });
             }
         } else {
-            if (request!=null && request.param!=null && request.param.length==1 && request.param[0].$!=null && request.param[0].$.username!=null && request.param[0].$.password!=null && request.param[0].$.sessid!=null) {
+            if (request!=null && request.param!=null && request.param.length===1 && request.param[0].$!=null && request.param[0].$.username!=null && request.param[0].$.password!=null && request.param[0].$.sessid!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
 
                 s2sObj.dbWrapper.callbackHashTable['s2sWorker'+requestID] = function(data){
@@ -432,10 +431,10 @@ var s2sObj = {
             request = request.data;
 
             var srv = s2sObj.dbWrapper.servers.find({"sessid":request.param[0].$.sessid});
-            if (srv!=null && srv.length==1) {
+            if (srv!=null && srv.length===1) {
                 var res = s2sObj.dbWrapper.users.find({"username":request.param[0].$.username});
-                if (res!=null && res.length==1) {
-                    if (res[0].loggedIn==false) {
+                if (res!=null && res.length===1) {
+                    if (res[0].loggedIn===false) {
                         res[0].loggedIn = true;
                         res[0].sessid = request.param[0].$.csessid;
                         res[0].heartbeat = null;
@@ -509,7 +508,7 @@ var s2sObj = {
                 });
             }
         } else {
-            if (request!=null && request.param!=null && request.param.length==1 && request.param[0].$!=null && request.param[0].$.username!=null && request.param[0].$.csessid!=null && request.param[0].$.sessid!=null) {
+            if (request!=null && request.param!=null && request.param.length===1 && request.param[0].$!=null && request.param[0].$.username!=null && request.param[0].$.csessid!=null && request.param[0].$.sessid!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
 
                 s2sObj.dbWrapper.callbackHashTable['s2sWorker'+requestID] = function(data){
@@ -554,7 +553,7 @@ var s2sObj = {
                 "message":request.param[0].$.message
             });
 
-            if (inserted!=null && inserted.username==request.param[0].$.username) {
+            if (inserted!=null && inserted.username===request.param[0].$.username) {
                 s2sObj.dbWrapper.queueC2SWorkerChatSend({
                     '$loki':inserted.$loki,
                     'username':inserted.username,
@@ -578,7 +577,7 @@ var s2sObj = {
                 }
             });
         } else {
-            if (request!=null && request.param!=null && request.param.length==1 && request.param[0].$!=null && request.param[0].$.username!=null && request.param[0].$.time!=null && request.param[0].$.message!=null) {
+            if (request!=null && request.param!=null && request.param.length===1 && request.param[0].$!=null && request.param[0].$.username!=null && request.param[0].$.time!=null && request.param[0].$.message!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
 
                 s2sObj.dbWrapper.callbackHashTable['s2sWorker'+requestID] = function(data){
@@ -618,9 +617,9 @@ var s2sObj = {
             request = request.data;
 
             var srv = s2sObj.dbWrapper.servers.find({"sessid":request.param[0].$.sessid});
-            if (srv!=null && srv.length==1) {
+            if (srv!=null && srv.length===1) {
                 var res = s2sObj.dbWrapper.users.find({"sessid":request.param[0].$.csessid});
-                if (res!=null && res.length==1) {
+                if (res!=null && res.length===1) {
                     res[0].loggedIn = false;
                     res[0].sessid = null;
                     res[0].heartbeat = null;
@@ -677,7 +676,7 @@ var s2sObj = {
                 });
             }
         } else {
-            if (request!=null && request.param!=null && request.param.length==1 && request.param[0].$!=null && request.param[0].$.csessid!=null && request.param[0].$.sessid!=null) {
+            if (request!=null && request.param!=null && request.param.length===1 && request.param[0].$!=null && request.param[0].$.csessid!=null && request.param[0].$.sessid!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
 
                 s2sObj.dbWrapper.callbackHashTable['s2sWorker'+requestID] = function(data){
@@ -717,10 +716,10 @@ var s2sObj = {
             request = request.data;
 
             var res = s2sObj.dbWrapper.servers.find({"sessid":request.param[0].$.sessid});
-            if (res!=null && res.length==1) {
+            if (res!=null && res.length===1) {
                 res[0].loggedIn = false;
-                res[0].sessid = null
-                res[0].mysessid = null
+                res[0].sessid = null;
+                res[0].mysessid = null;
                 res[0].heartbeat = null;
                 var usrRes = s2sObj.dbWrapper.users.find({"handlerIpPort":res[0].ipPort});
                 if (usrRes!=null && usrRes.length>0) {
@@ -766,7 +765,7 @@ var s2sObj = {
                 });
             }
         } else {
-            if (request!=null && request.param!=null && request.param.length==1 && request.param[0].$!=null && request.param[0].$.sessid!=null) {
+            if (request!=null && request.param!=null && request.param.length===1 && request.param[0].$!=null && request.param[0].$.sessid!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
 
                 s2sObj.dbWrapper.callbackHashTable['s2sWorker'+requestID] = function(data){
@@ -806,7 +805,7 @@ var s2sObj = {
             request = request.data;
 
             var res = s2sObj.dbWrapper.servers.find({"sessid":request.param[0].$.sessid});
-            if (res!=null && res.length==1) {
+            if (res!=null && res.length===1) {
                 res[0].heartbeat = Date.now();
                 s2sObj.dbWrapper.servers.update(res[0]);
                 cluster.workers[workerID].send({
@@ -841,7 +840,7 @@ var s2sObj = {
                 });
             }
         } else {
-            if (request!=null && request.param!=null && request.param.length==1 && request.param[0].$!=null && request.param[0].$.sessid!=null) {
+            if (request!=null && request.param!=null && request.param.length===1 && request.param[0].$!=null && request.param[0].$.sessid!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
 
                 s2sObj.dbWrapper.callbackHashTable['s2sWorker'+requestID] = function(data){

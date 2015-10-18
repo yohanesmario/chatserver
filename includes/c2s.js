@@ -2,7 +2,6 @@ var xml2js = require('xml2js');
 var crypto = require('crypto');
 var sha512 = null;
 var cluster = require('cluster');
-var logWrapper = require('./logWrapper.js');
 var xmlBuilder = new xml2js.Builder();
 var async = require('async');
 
@@ -44,7 +43,7 @@ var c2sObj = {
                 c2sObj.chatSend(request, response);
             } break;
             case 'chatPull': {
-                if (request.param!=null && request.param.length==1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.lastID!=null) {
+                if (request.param!=null && request.param.length===1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.lastID!=null) {
                     c2sObj.chatPull(request, response);
                 } else {
                     response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
@@ -83,8 +82,8 @@ var c2sObj = {
             var res = c2sObj.dbWrapper.users.by('username', username);
 
             if (res!=null && res.password!=null) {
-                if (res.loggedIn==false) {
-                    if (res.password==hash) {
+                if (res.loggedIn===false) {
+                    if (res.password===hash) {
                         // Success
                         res.loggedIn = true;
                         res.sessid = sessid;
@@ -109,7 +108,7 @@ var c2sObj = {
                             }
                         });
 
-                        c2sObj.s2sClient.loginClient(username, sessid, function(r){});
+                        c2sObj.s2sClient.loginClient(username, sessid, function(){});
                     } else {
                         // Fail
                         cluster.workers[workerID].send({
@@ -164,11 +163,11 @@ var c2sObj = {
                 });
             }
         } else {
-            if (request.param!=null && request.param.length==1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.user!=null && request.param[0].$.password!=null) {
+            if (request.param!=null && request.param.length===1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.user!=null && request.param[0].$.password!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
                 hash = null;
                 sessid = null;
-                if (request!=null && request.param!=null && request.param.length==1 && request.param[0].$!=null && request.param[0].$.user!=null && request.param[0].$.password!=null) {
+                if (request!=null && request.param!=null && request.param.length===1 && request.param[0].$!=null && request.param[0].$.user!=null && request.param[0].$.password!=null) {
                     sha512 = crypto.createHash('sha512');
                     sha512.update(request.param[0].$.password);
                     hash = sha512.digest('hex');
@@ -216,7 +215,7 @@ var c2sObj = {
             var sessid = request.param[0].$.sessid;
             var res = c2sObj.dbWrapper.users.find({"sessid":sessid});
 
-            if (res!=null && res.length>0 && res[0].sessid==sessid) {
+            if (res!=null && res.length>0 && res[0].sessid===sessid) {
                 res[0].loggedIn = false;
                 res[0].sessid = null;
                 res[0].heartbeat = null;
@@ -239,7 +238,7 @@ var c2sObj = {
                     }
                 });
 
-                c2sObj.s2sClient.logoutClient(sessid, function(r){});
+                c2sObj.s2sClient.logoutClient(sessid, function(){});
             } else {
                 cluster.workers[workerID].send({
                     messageType:"c2sWorker",
@@ -258,7 +257,7 @@ var c2sObj = {
                 });
             }
         } else {
-            if (request.param!=null && request.param.length==1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.sessid!=null) {
+            if (request.param!=null && request.param.length===1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.sessid!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
 
                 c2sObj.dbWrapper.callbackHashTable['c2sWorker'+requestID] = function(data){
@@ -311,7 +310,7 @@ var c2sObj = {
                 "handlerIpPort":null
             });
 
-            if (res.username==username) {
+            if (res.username===username) {
                 // Success
                 c2sObj.dbWrapper.queueSaving();
 
@@ -330,7 +329,7 @@ var c2sObj = {
                     }
                 });
 
-                c2sObj.s2sClient.registerClient(username, password, function(r){});
+                c2sObj.s2sClient.registerClient(username, password, function(){});
             } else {
                 // Fail
                 cluster.workers[workerID].send({
@@ -350,10 +349,10 @@ var c2sObj = {
                 });
             }
         } else {
-            if (request.param!=null && request.param.length==1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.user!=null && request.param[0].$.password!=null) {
+            if (request.param!=null && request.param.length===1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.user!=null && request.param[0].$.password!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
                 hash = null;
-                if (request!=null && request.param!=null && request.param.length==1 && request.param[0].$!=null && request.param[0].$.password!=null) {
+                if (request!=null && request.param!=null && request.param.length===1 && request.param[0].$!=null && request.param[0].$.password!=null) {
                     sha512 = crypto.createHash('sha512');
                     sha512.update(request.param[0].$.password);
                     hash = sha512.digest('hex');
@@ -401,7 +400,7 @@ var c2sObj = {
 
             var res = c2sObj.dbWrapper.users.find({"sessid":sessid});
 
-            if (res!=null && res.length>0 && res[0].sessid==sessid) {
+            if (res!=null && res.length>0 && res[0].sessid===sessid) {
                 var msgRes = c2sObj.dbWrapper.chatHistory.insert({
                     'username':res[0].username,
                     'time':Date.now(),
@@ -415,7 +414,7 @@ var c2sObj = {
                         'username':msgRes.username,
                         'time':msgRes.time,
                         'message':msgRes.message
-                    }, function(r){
+                    }, function(){
                         // Berhasil ngirim
                     });
                 }
@@ -458,7 +457,7 @@ var c2sObj = {
                 });
             }
         } else {
-            if (request.param!=null && request.param.length==1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.sessid!=null && request.param[0].$.message!=null) {
+            if (request.param!=null && request.param.length===1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.sessid!=null && request.param[0].$.message!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
 
                 c2sObj.dbWrapper.callbackHashTable['c2sWorker'+requestID] = function(data){
@@ -495,7 +494,7 @@ var c2sObj = {
             if (response.closedByClient!==true && response.closedByServer!==true) {
                 var lastID = parseInt(request.param[0].$.lastID);
                 var messages = null;
-                if (lastID==-1) {
+                if (lastID===-1) {
                     // find all
                     messages = c2sObj.dbWrapper.chatHistory;
                 } else {
@@ -529,7 +528,7 @@ var c2sObj = {
                         async.setImmediate(function(){
                             callback();
                         });
-                    }, function(err) {
+                    }, function() {
                         if (reqID==null) {
                             response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
                         }
@@ -606,7 +605,7 @@ var c2sObj = {
                     async.setImmediate(function(){
                         callback();
                     });
-                }, function(err) {
+                }, function() {
                     cluster.workers[workerID].send({
                         messageType:"c2sWorker",
                         payload:{
@@ -642,7 +641,7 @@ var c2sObj = {
                 });
             }
         } else {
-            if (request.param!=null && request.param.length==1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.time!=null) {
+            if (request.param!=null && request.param.length===1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.time!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
 
                 c2sObj.dbWrapper.callbackHashTable['c2sWorker'+requestID] = function(data){
@@ -684,7 +683,7 @@ var c2sObj = {
             var sessid = request.param[0].$.sessid;
             var res = c2sObj.dbWrapper.users.find({'sessid':sessid});
 
-            if (res.length==1 && res[0]!=null && res[0].username!=null) {
+            if (res!=null && res.length===1 && res[0]!=null && res[0].username!=null) {
                 res[0].heartbeat = Date.now();
                 res[0].handledByMe = true;
                 res[0].handlerIpPort = null;
@@ -722,7 +721,7 @@ var c2sObj = {
                 });
             }
         } else {
-            if (request.param!=null && request.param.length==1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.sessid!=null) {
+            if (request!=null && request.param!=null && request.param.length===1 && request.param[0]!=null && request.param[0].$!=null && request.param[0].$.sessid!=null) {
                 requestID = cluster.worker.id + "::" + Date.now() + crypto.randomBytes(4).toString('base64');
 
                 c2sObj.dbWrapper.callbackHashTable['c2sWorker'+requestID] = function(data){

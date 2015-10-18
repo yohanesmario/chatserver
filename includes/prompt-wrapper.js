@@ -1,12 +1,9 @@
 var cc = require("./clusterCounter.js");
-var numCPUs = cc.numCPUs;
 var numWorkers = cc.numWorkers;
 
 var fs = require('fs');
 var cluster = require('cluster');
 var prompt = require('prompt');
-var logWrapper = require('./logWrapper.js');
-var colors = require('colors/safe');
 var async = require('async');
 var s2sClient = require('./s2sClient.js');
 prompt.start();
@@ -46,9 +43,9 @@ var execPrompt = function() {
                 case 'exit': {
                     var doExit = function(){
                         var workerCount = 0;
-                        cluster._events.exit = function(worker, code, signal) {
+                        cluster._events.exit = function() {
                             workerCount++;
-                            if (workerCount==numWorkers) {
+                            if (workerCount===numWorkers) {
                                 console.log("Server terminated");
                                 console.log("Goodbye");
                                 process.exit(0);
@@ -72,14 +69,14 @@ var execPrompt = function() {
                         var countExit = 0;
                         var maxCountExit = srv.length;
                         console.log("Logging out from network...");
-                        s2sClient.logoutServer(function(r){
+                        s2sClient.logoutServer(function(){
                             countExit++;
-                            if (countExit==maxCountExit) {
+                            if (countExit===maxCountExit) {
                                 doExit();
                             }
-                        }, function(e){
+                        }, function(){
                             countExit++;
-                            if (countExit==maxCountExit) {
+                            if (countExit===maxCountExit) {
                                 doExit();
                             }
                         });
@@ -113,9 +110,9 @@ var execPrompt = function() {
 
 module.exports = {};
 module.exports.startReading = function(dbWrp, s2sCli){
-    if (promptEventHandled==false) {
+    if (promptEventHandled===false) {
         promptEventHandled = true;
-        process.on('console', function(data){
+        process.on('console', function(){
             process.stdout.write(commandText+" ");
         });
     }

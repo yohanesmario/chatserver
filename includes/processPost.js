@@ -9,7 +9,7 @@ var xmlBuilder = new xml2js.Builder();
 var processPost = function (request, response) {
     var queryData = "";
 
-    if(request.method == 'POST') {
+    if(request.method === 'POST') {
         request.on('data', function(data) {
             queryData += data;
             if(queryData.length > 1e6) {
@@ -95,7 +95,7 @@ module.exports.init = function(cfg, dbWrapper, s2sClient){
                     } break;
                     case "c2sWorkerChatSend": {
                         for (var i = 0; i < data.payload.length; i++) {
-                            if (i==0 && c2s.dbWrapper.chatHistory.length==0) {
+                            if (i===0 && c2s.dbWrapper.chatHistory.length===0) {
                                 c2s.dbWrapper.chatHistoryFirstID = data.payload[i].$loki;
                             }
                             c2s.dbWrapper.chatHistory.push(data.payload[i]);

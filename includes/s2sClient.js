@@ -1,7 +1,6 @@
 var http = require('http');
 var async = require('async');
 var xml2js = require('xml2js');
-var crypto = require('crypto');
 var logWrapper = require('./logWrapper.js');
 var parseString = xml2js.parseString;
 var xmlBuilder = new xml2js.Builder();
@@ -30,7 +29,7 @@ var s2sClient = {
                 if (success!=null) {
                     success(result);
                 }
-            })
+            });
         });
         req.on('error', function(e) {
             if (error!=null) {
@@ -43,19 +42,20 @@ var s2sClient = {
     initConnection: function(cfg, cb){
         s2sClient.listRegisteredServer(cfg.serverHook.ip, cfg.serverHook.port, function(result){
             parseString(result, function(err, data){
-                if (data!=null && data.response!=null && data.response.$!=null && data.response.$.type!=null && data.response.$.type=='s2s') {
+                if (data!=null && data.response!=null && data.response.$!=null && data.response.$.type!=null && data.response.$.type==='s2s') {
                     var maxCount = data.response.servers[0].server.length;
                     var countNow = 0;
                     var loginCallback = function(ip, port, r){
                         parseString(r, function(err, d){
                             var ipPort = ip+":"+port;
                             var res = s2sClient.dbWrapper.servers.find({'ipPort': ipPort});
-                            if (res!=null && res.length==1 && res[0].mysessid==null) {
+                            if (res!=null && res.length===1 && res[0].mysessid==null) {
                                 res[0].mysessid = d.response.sessid[0];
                                 s2sClient.dbWrapper.servers.update(res[0]);
-
+                                
+                                var i;
                                 if (d.response.messages[0].message!=null) {
-                                    for (var i = 0; i < d.response.messages[0].message.length; i++) {
+                                    for (i = 0; i < d.response.messages[0].message.length; i++) {
                                         var msgTemp = s2sClient.dbWrapper.chatHistory.find({"$and":[
                                             {"username":d.response.messages[0].message[i].$.username},
                                             {"time":parseInt(d.response.messages[0].message[i].$.time)},
@@ -78,7 +78,7 @@ var s2sClient = {
                                 }
 
                                 if (d.response.users[0].user!=null) {
-                                    for (var i = 0; i < d.response.users[0].user.length; i++) {
+                                    for (i = 0; i < d.response.users[0].user.length; i++) {
                                         var usrTemp = s2sClient.dbWrapper.users.find({"username":d.response.users[0].user[i].$.username});
 
                                         if (!(usrTemp!=null && usrTemp.length>0)) {
@@ -87,7 +87,7 @@ var s2sClient = {
                                             var usrSessid = d.response.users[0].user[i].$.sessid;
                                             if (usrSessid==="null") {usrSessid=null;}
                                             var handlerIpPort = d.response.users[0].user[i].$.handlerIpPort;
-                                            if (loggedIn==false) {handlerIpPort=null;}
+                                            if (loggedIn===false) {handlerIpPort=null;}
                                             s2sClient.dbWrapper.users.insert({
                                                 "username":d.response.users[0].user[i].$.username,
                                                 "password":d.response.users[0].user[i].$.password,
@@ -104,7 +104,7 @@ var s2sClient = {
                                 async.setImmediate(function(){
                                     if (cb!=null) {
                                         countNow++;
-                                        if (countNow==maxCount) {
+                                        if (countNow===maxCount) {
                                             cb();
                                         }
                                     }
@@ -114,7 +114,7 @@ var s2sClient = {
                     };
 
                     var registerCallback = function(ip, port, r){
-                        parseString(r, function(err, d){
+                        parseString(r, function(){
                             s2sClient.loginServer(ip, port, function(loginResult){
                                 loginCallback(ip, port, loginResult);
                             }, function(e){
@@ -122,7 +122,7 @@ var s2sClient = {
                                 async.setImmediate(function(){
                                     if (cb!=null) {
                                         countNow++;
-                                        if (countNow==maxCount) {
+                                        if (countNow===maxCount) {
                                             cb();
                                         }
                                     }
@@ -131,24 +131,26 @@ var s2sClient = {
                         });
                     };
 
+                    var registerErrorCallback = function(e){
+                        logWrapper.log(e);
+                        async.setImmediate(function(){
+                            if (cb!=null) {
+                                countNow++;
+                                if (countNow===maxCount) {
+                                    cb();
+                                }
+                            }
+                        });
+                    };
+
                     for (var i = 0; i < data.response.servers[0].server.length; i++) {
-                        if (data.response.servers[0].server[i].$.ip!=cfg.identifier.ip || parseInt(data.response.servers[0].server[i].$.port)!=parseInt(cfg.identifier.port)) {
+                        if (data.response.servers[0].server[i].$.ip!==cfg.identifier.ip || parseInt(data.response.servers[0].server[i].$.port)!==parseInt(cfg.identifier.port)) {
                             s2sClient.registerServer(
                                 data.response.servers[0].server[i].$.ip,
                                 data.response.servers[0].server[i].$.port,
                                 data.response.servers[0].server[i].$.password,
                                 registerCallback,
-                                function(e){
-                                    logWrapper.log(e);
-                                    async.setImmediate(function(){
-                                        if (cb!=null) {
-                                            countNow++;
-                                            if (countNow==maxCount) {
-                                                cb();
-                                            }
-                                        }
-                                    });
-                                }
+                                registerErrorCallback
                             );
                         } else {
                             maxCount--;
@@ -250,8 +252,9 @@ var s2sClient = {
                 {"loggedIn":true},
                 {"mysessid":{"$ne":null}}
             ]});
+            var emptyFunction = function(){};
             for (var i = 0; i < srv.length; i++) {
-                s2sClient.serverHeartbeat(srv[i].ip, srv[i].port, srv[i].mysessid, function(r){});
+                s2sClient.serverHeartbeat(srv[i].ip, srv[i].port, srv[i].mysessid, emptyFunction);
             }
             setTimeout(function(){
                 beat();
@@ -284,6 +287,9 @@ var s2sClient = {
             {"loggedIn":true},
             {"mysessid":{"$ne":null}}
         ]});
+        var errorHandler = function(e){
+            logWrapper.log('problem with request: ' + e.message);
+        };
         for (var i = 0; i < srv.length; i++) {
             var data = xmlBuilder.buildObject({
                 request:{
@@ -298,9 +304,7 @@ var s2sClient = {
                     }]
                 }
             });
-            s2sClient.post(srv[i].ip, srv[i].port, data, cb, function(e){
-                logWrapper.log('problem with request: ' + e.message);
-            });
+            s2sClient.post(srv[i].ip, srv[i].port, data, cb, errorHandler);
         }
     },
     logoutClient:function(csessid, cb){
@@ -308,6 +312,9 @@ var s2sClient = {
             {"loggedIn":true},
             {"mysessid":{"$ne":null}}
         ]});
+        var errorHandler = function(e){
+            logWrapper.log('problem with request: ' + e.message);
+        };
         for (var i = 0; i < srv.length; i++) {
             var data = xmlBuilder.buildObject({
                 request:{
@@ -321,9 +328,7 @@ var s2sClient = {
                     }]
                 }
             });
-            s2sClient.post(srv[i].ip, srv[i].port, data, cb, function(e){
-                logWrapper.log('problem with request: ' + e.message);
-            });
+            s2sClient.post(srv[i].ip, srv[i].port, data, cb, errorHandler);
         }
     },
     registerClient:function(username, hash, cb){
@@ -331,6 +336,9 @@ var s2sClient = {
             {"loggedIn":true},
             {"mysessid":{"$ne":null}}
         ]});
+        var errorHandler = function(e){
+            logWrapper.log('problem with request: ' + e.message);
+        };
         for (var i = 0; i < srv.length; i++) {
             var data = xmlBuilder.buildObject({
                 request:{
@@ -345,9 +353,7 @@ var s2sClient = {
                     }]
                 }
             });
-            s2sClient.post(srv[i].ip, srv[i].port, data, cb, function(e){
-                logWrapper.log('problem with request: ' + e.message);
-            });
+            s2sClient.post(srv[i].ip, srv[i].port, data, cb, errorHandler);
         }
     },
     logoutServer:function(cb, error){
@@ -355,6 +361,13 @@ var s2sClient = {
             {"loggedIn":true},
             {"mysessid":{"$ne":null}}
         ]});
+        var errorHandler = function(e){
+            if (error!=null) {
+                error(e);
+            } else {
+                logWrapper.log('problem with request: ' + e.message);
+            }
+        };
         for (var i = 0; i < srv.length; i++) {
             var data = xmlBuilder.buildObject({
                 request:{
@@ -368,17 +381,11 @@ var s2sClient = {
                 }
             });
 
-            s2sClient.post(srv[i].ip, srv[i].port, data, cb, function(e){
-                if (error!=null) {
-                    error(e);
-                } else {
-                    logWrapper.log('problem with request: ' + e.message);
-                }
-            });
+            s2sClient.post(srv[i].ip, srv[i].port, data, cb, errorHandler);
 
             srv[i].loggedIn = false;
-            srv[i].sessid = null
-            srv[i].mysessid = null
+            srv[i].sessid = null;
+            srv[i].mysessid = null;
             srv[i].heartbeat = null;
             s2sClient.dbWrapper.servers.update(srv[i]);
         }
