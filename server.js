@@ -36,12 +36,12 @@ if (cluster.isMaster) {
                 if (cfg.serverHook!=null) {
                     s2sClient.initConnection(cfg, function(){
                         console.log("\nREADY\n");
-                        promptWrapper.startReading(dbWrapper);
+                        promptWrapper.startReading(dbWrapper, s2sClient);
                         s2sClient.startHeartbeat();
                     });
                 } else {
                     console.log("\nREADY\n");
-                    promptWrapper.startReading(dbWrapper);
+                    promptWrapper.startReading(dbWrapper, s2sClient);
                     s2sClient.startHeartbeat();
                 }
             }

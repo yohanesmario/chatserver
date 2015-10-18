@@ -15,6 +15,7 @@ prompt.message = "";
 prompt.delimiter = "";
 var promptEventHandled = false;
 var dbWrapper = null;
+var s2sClient = null;
 
 // var commandText = colors.inverse(">");
 var commandText = ">";
@@ -43,24 +44,48 @@ var execPrompt = function() {
                     });
                 } break;
                 case 'exit': {
-                    var workerCount = 0;
-                    cluster._events.exit = function(worker, code, signal) {
-                        workerCount++;
-                        if (workerCount==numWorkers) {
-                            console.log("Server terminated");
-                            console.log("Goodbye");
-                            process.exit(0);
-                        }
+                    var doExit = function(){
+                        var workerCount = 0;
+                        cluster._events.exit = function(worker, code, signal) {
+                            workerCount++;
+                            if (workerCount==numWorkers) {
+                                console.log("Server terminated");
+                                console.log("Goodbye");
+                                process.exit(0);
+                            }
+                        };
+                        cluster._eventsCount = 1;
+                        console.log("Terminating workers...");
+                        async.setImmediate(function(){
+                            for (var key in cluster.workers) {
+                                cluster.workers[key].send({
+                                    messageType:"killWorker"
+                                });
+                            }
+                        });
                     };
-                    cluster._eventsCount = 1;
-                    console.log("Terminating workers...");
-                    async.setImmediate(function(){
-                        for (var key in cluster.workers) {
-                            cluster.workers[key].send({
-                                messageType:"killWorker"
-                            });
-                        }
-                    });
+                    var srv = s2sClient.dbWrapper.servers.find({"$and":[
+                        {"loggedIn":true},
+                        {"mysessid":{"$ne":null}}
+                    ]});
+                    if (srv!=null && srv.length>0) {
+                        var countExit = 0;
+                        var maxCountExit = srv.length;
+                        console.log("Logging out from network...");
+                        s2sClient.logoutServer(function(r){
+                            countExit++;
+                            if (countExit==maxCountExit) {
+                                doExit();
+                            }
+                        }, function(e){
+                            countExit++;
+                            if (countExit==maxCountExit) {
+                                doExit();
+                            }
+                        });
+                    } else {
+                        doExit();
+                    }
                 } break;
                 case 'flush': {
                     dbWrapper.flush(function(){
@@ -87,7 +112,7 @@ var execPrompt = function() {
 };
 
 module.exports = {};
-module.exports.startReading = function(dbWrp){
+module.exports.startReading = function(dbWrp, s2sCli){
     if (promptEventHandled==false) {
         promptEventHandled = true;
         process.on('console', function(data){
@@ -95,5 +120,6 @@ module.exports.startReading = function(dbWrp){
         });
     }
     dbWrapper = dbWrp;
+    s2sClient = s2sCli;
     startReading();
 };
