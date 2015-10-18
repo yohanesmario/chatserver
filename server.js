@@ -1,3 +1,5 @@
+'use strict';
+
 // Absolute Dependencies
 var cc = require("./includes/clusterCounter.js");
 var numCPUs = cc.numCPUs;

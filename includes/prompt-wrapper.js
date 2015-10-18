@@ -1,3 +1,5 @@
+'use strict';
+
 var cc = require("./clusterCounter.js");
 var numWorkers = cc.numWorkers;
 

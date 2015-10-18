@@ -1,3 +1,5 @@
+'use strict';
+
 var http = require('http');
 var async = require('async');
 var xml2js = require('xml2js');
@@ -52,7 +54,7 @@ var s2sClient = {
                             if (res!=null && res.length===1 && res[0].mysessid==null) {
                                 res[0].mysessid = d.response.sessid[0];
                                 s2sClient.dbWrapper.servers.update(res[0]);
-                                
+
                                 var i;
                                 if (d.response.messages[0].message!=null) {
                                     for (i = 0; i < d.response.messages[0].message.length; i++) {

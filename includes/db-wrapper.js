@@ -1,3 +1,5 @@
+'use strict';
+
 var cluster = require('cluster');
 var loki = require('lokijs');
 var async = require('async');

@@ -1,3 +1,5 @@
+'use strict';
+
 var cluster = require('cluster');
 var crypto = require('crypto');
 var sha512 = null;

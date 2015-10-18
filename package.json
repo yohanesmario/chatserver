@@ -24,6 +24,7 @@
     "rwlock": "^5.0.0",
     "throng": "^1.0.1",
     "url": "^0.11.0",
+    "use-strict": "^1.0.1",
     "webworker-threads": "^0.6.2",
     "winston": "^1.1.0",
     "xml2js": "^0.4.12"
