@@ -3,8 +3,8 @@
 var xml2js = require('xml2js');
 var cluster = require('cluster');
 var async = require('async');
-var c2s = require('../includes/c2s.js');
-var s2s = require('../includes/s2s.js');
+var c2s = require('./c2s.js');
+var s2s = require('./s2s.js');
 var parseString = xml2js.parseString;
 var xmlBuilder = new xml2js.Builder();
 
