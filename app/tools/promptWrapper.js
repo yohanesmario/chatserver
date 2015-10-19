@@ -1,13 +1,14 @@
 'use strict';
 
-var cc = require("./clusterCounter.js");
+var include = require('include');
+var cc = include("app.tools.clusterCounter");
 var numWorkers = cc.numWorkers;
 
-var fs = require('fs');
-var cluster = require('cluster');
-var prompt = require('prompt');
-var async = require('async');
-var s2sClient = require('./s2sClient.js');
+var fs = include('fs');
+var cluster = include('cluster');
+var prompt = include('prompt');
+var async = include('async');
+var s2sClient = include('app.s2s.s2sClient');
 prompt.start();
 prompt.colors = false;
 prompt.message = "";

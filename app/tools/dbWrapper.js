@@ -1,9 +1,10 @@
 'use strict';
 
-var cluster = require('cluster');
-var loki = require('lokijs');
-var async = require('async');
-var logWrapper = require('./logWrapper.js');
+var include = require('include');
+var cluster = include('cluster');
+var loki = include('lokijs');
+var async = include('async');
+var logWrapper = include('app.tools.logWrapper');
 var savingQueue = false;
 var savingExec = false;
 var sendingQueue = [];

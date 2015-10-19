@@ -1,11 +1,11 @@
 'use strict';
-
-var xml2js = require('xml2js');
-var crypto = require('crypto');
+var include = require('include');
+var xml2js = include('xml2js');
+var crypto = include('crypto');
 var sha512 = null;
-var cluster = require('cluster');
+var cluster = include('cluster');
 var xmlBuilder = new xml2js.Builder();
-var async = require('async');
+var async = include('async');
 
 var c2sObj = {
     chatHistory:[],

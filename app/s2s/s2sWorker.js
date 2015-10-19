@@ -1,9 +1,10 @@
 'use strict';
 
-var cluster = require('cluster');
-var crypto = require('crypto');
+var include = require('include');
+var cluster = include('cluster');
+var crypto = include('crypto');
 var sha512 = null;
-var xml2js = require('xml2js');
+var xml2js = include('xml2js');
 var xmlBuilder = new xml2js.Builder();
 
 var s2sObj = {

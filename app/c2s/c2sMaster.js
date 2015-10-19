@@ -1,7 +1,7 @@
 'use strict';
-
-var cluster = require('cluster');
-var async = require('async');
+var include = require('include');
+var cluster = include('cluster');
+var async = include('async');
 
 var c2sObj = {
     dbWrapper:null,
@@ -385,7 +385,7 @@ var c2sObj = {
             });
         }
     },
-    
+
     heartbeat:function(request){
         var requestID;
         requestID = request.reqID;

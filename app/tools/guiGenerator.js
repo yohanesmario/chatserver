@@ -1,10 +1,11 @@
 'use strict';
 
-var fs = require('fs');
-var url = require('url');
-var mime = require('mime-types');
-var zlib = require('zlib');
-var async = require('async');
+var include = require('include');
+var fs = include('fs');
+var url = include('url');
+var mime = include('mime-types');
+var zlib = include('zlib');
+var async = include('async');
 
 module.exports = {
 	handle: function(request, response){

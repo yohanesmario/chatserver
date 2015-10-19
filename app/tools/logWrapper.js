@@ -1,6 +1,7 @@
 'use strict';
 
-var cluster = require('cluster');
+var include = require('include');
+var cluster = include('cluster');
 
 module.exports = {};
 module.exports.log = function(str){

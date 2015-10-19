@@ -1,23 +1,24 @@
 'use strict';
+var include = require('include');
 
 // Absolute Dependencies
-var cc = require('../clusterCounter.js');
+var cc = include('app.tools.clusterCounter');
 var numCPUs = cc.numCPUs;
 
 // Environment variables
 process.env.UV_THREADPOOL_SIZE = numCPUs; // libuv threadpool size
 
 // Common Dependencies
-var cluster = require('cluster');
-var logWrapper = require('../logWrapper.js');
+var cluster = include('cluster');
+var logWrapper = include('app.tools.logWrapper');
 
 // Child Dependencies
-var http = require('http');
-var xml2js = require('xml2js');
+var http = include('http');
+var xml2js = include('xml2js');
 var xmlBuilder = new xml2js.Builder();
-var cfg = require('../readArgv.js').init(process);
-var guiGenerator = require('../guiGenerator.js');
-var processPost = require('../processPost.js').init(cfg);
+var cfg = include('app.tools.readArgv').init(process);
+var guiGenerator = include('app.tools.guiGenerator');
+var processPost = include('app.tools.processPost').init(cfg);
 
 // Create Server
 var server = http.createServer(function(request, response) {

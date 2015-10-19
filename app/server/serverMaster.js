@@ -1,7 +1,8 @@
 'use strict';
+var include = require('include');
 
 // Absolute Dependencies
-var cc = require('../clusterCounter.js');
+var cc = include('app.tools.clusterCounter');
 var numCPUs = cc.numCPUs;
 var numWorkers = cc.numWorkers;
 
@@ -9,20 +10,20 @@ var numWorkers = cc.numWorkers;
 process.env.UV_THREADPOOL_SIZE = numCPUs; // libuv threadpool size
 
 // Common Dependencies
-var cluster = require('cluster');
-var logWrapper = require('../logWrapper.js');
+var cluster = include('cluster');
+var logWrapper = include('app.tools.logWrapper');
 
 // APP TITLE
 console.log("\nHTTP CHAT SERVER\n");
 
 // Master Dependencies
-var cfg = require('../readArgv.js').init(process);
-var promptWrapper = require('../promptWrapper.js');
-var s2sClient = require('../s2sClient.js');
-var dbWrapper = require('../dbWrapper.js').init(cfg);
+var cfg = include('app.tools.readArgv').init(process);
+var promptWrapper = include('app.tools.promptWrapper');
+var s2sClient = include('app.s2s.s2sClient');
+var dbWrapper = include('app.tools.dbWrapper').init(cfg);
 s2sClient.dbWrapper = dbWrapper;
 s2sClient.cfg = cfg;
-var processPost = require('../processPost.js').init(cfg, dbWrapper, s2sClient);
+var processPost = include('app.tools.processPost').init(cfg, dbWrapper, s2sClient);
 
 // Set round-robin cluster scheduling
 // cluster.schedulingPolicy = cluster.SCHED_RR;

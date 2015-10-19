@@ -1,10 +1,9 @@
 'use strict';
-
 var include = require('include');
 var cluster = include('cluster');
 
 if (cluster.isMaster) {
-    include('app.server.serverMaster');
+    module.exports = include('app.s2s.s2sMaster');
 } else {
-    include('app.server.serverWorker');
+    module.exports = include('app.s2s.s2sWorker');
 }

@@ -1,8 +1,9 @@
 'use strict';
 
-var cluster = require('cluster');
-var async = require('async');
-var xml2js = require('xml2js');
+var include = require('include');
+var cluster = include('cluster');
+var async = include('async');
+var xml2js = include('xml2js');
 var parseString = xml2js.parseString;
 
 var s2sObj = {

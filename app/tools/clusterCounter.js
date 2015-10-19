@@ -1,6 +1,7 @@
 'use strict';
 
-var os = require('os');
+var include = require('include');
+var os = include('os');
 
 module.exports = {};
 

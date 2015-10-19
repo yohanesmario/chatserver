@@ -1,10 +1,10 @@
 'use strict';
 
-var xml2js = require('xml2js');
-var cluster = require('cluster');
-var async = require('async');
-var c2s = require('./c2s.js');
-var s2s = require('./s2s.js');
+var include = require('include');
+var xml2js = include('xml2js');
+var cluster = include('cluster');
+var c2s = include('app.c2s.c2s');
+var s2s = include('app.s2s.s2s');
 var parseString = xml2js.parseString;
 var xmlBuilder = new xml2js.Builder();
 

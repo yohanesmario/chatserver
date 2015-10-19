@@ -1,10 +1,11 @@
 'use strict';
 
-var fs = require('fs');
-var os = require('os');
+var include = require('include');
+var fs = include('fs');
+var os = include('os');
 var ifaces = os.networkInterfaces();
-var cluster = require('cluster');
-var crypto = require('crypto');
+var cluster = include('cluster');
+var crypto = include('crypto');
 var sha512 = null;
 
 var objectSize = function(obj){
