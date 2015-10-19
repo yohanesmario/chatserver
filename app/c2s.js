@@ -3,7 +3,7 @@
 var cluster = require('cluster');
 
 if (cluster.isMaster) {
-    module.exports = require('./c2s/c2s.master.js');
+    module.exports = require('./c2s/c2sMaster.js');
 } else {
-    module.exports = require('./c2s/c2s.worker.js');
+    module.exports = require('./c2s/c2sWorker.js');
 }

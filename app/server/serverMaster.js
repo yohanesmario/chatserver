@@ -17,9 +17,9 @@ console.log("\nHTTP CHAT SERVER\n");
 
 // Master Dependencies
 var cfg = require('../readArgv.js').init(process);
-var promptWrapper = require('../prompt-wrapper.js');
+var promptWrapper = require('../promptWrapper.js');
 var s2sClient = require('../s2sClient.js');
-var dbWrapper = require('../db-wrapper.js').init(cfg);
+var dbWrapper = require('../dbWrapper.js').init(cfg);
 s2sClient.dbWrapper = dbWrapper;
 s2sClient.cfg = cfg;
 var processPost = require('../processPost.js').init(cfg, dbWrapper, s2sClient);

@@ -3,7 +3,7 @@
 var cluster = require('cluster');
 
 if (cluster.isMaster) {
-    require('./app/server/server.master.js');
+    require('./app/server/serverMaster.js');
 } else {
-    require('./app/server/server.worker.js');
+    require('./app/server/serverWorker.js');
 }
