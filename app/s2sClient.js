@@ -79,6 +79,7 @@ var s2sClient = {
                                             });
                                         }
                                     }
+                                    s2sClient.dbWrapper.queueSaving();
                                 }
 
                                 if (d.response.users[0].user!=null) {
@@ -103,6 +104,7 @@ var s2sClient = {
                                             });
                                         }
                                     }
+                                    s2sClient.dbWrapper.queueSaving();
                                 }
 
                                 async.setImmediate(function(){
@@ -369,7 +371,7 @@ var s2sClient = {
             s2sClient.post(srv[i].ip, srv[i].port, data, cb, errorHandler);
         }
     },
-    
+
     logoutServer:function(cb, error){
         var srv = s2sClient.dbWrapper.servers.find({"$and":[
             {"loggedIn":true},

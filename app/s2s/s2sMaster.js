@@ -262,6 +262,7 @@ var s2sObj = {
                 "handledByMe":false,
                 "handlerIpPort":null
             });
+            s2sObj.dbWrapper.queueSaving();
 
             if (res!=null && res.username===request.param[0].$.username) {
                 cluster.workers[workerID].send({
@@ -410,6 +411,7 @@ var s2sObj = {
             "time":parseInt(request.param[0].$.time),
             "message":request.param[0].$.message
         });
+        s2sObj.dbWrapper.queueSaving();
 
         if (inserted!=null && inserted.username===request.param[0].$.username) {
             s2sObj.dbWrapper.queueC2SWorkerChatSend({
@@ -602,7 +604,7 @@ var s2sObj = {
             });
         }
     },
-    
+
     listRegisteredServer:function(request){
         var requestID;
         requestID = request.reqID;
