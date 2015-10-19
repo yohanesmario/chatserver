@@ -73,54 +73,27 @@ module.exports.s2s = s2s;
 module.exports.process = processPost;
 module.exports.init = function(cfg, dbWrapper, s2sClient){
     if (cluster.isMaster) {
-        c2s.dbWrapper = dbWrapper;
         c2s.cfg = cfg;
-        c2s.s2sClient = s2sClient;
-        s2s.dbWrapper = dbWrapper;
         s2s.cfg = cfg;
+        c2s.s2sClient = s2sClient;
         s2s.s2sClient = s2sClient;
+        c2s.dbWrapper = dbWrapper;
+        s2s.dbWrapper = dbWrapper;
     } else {
+        c2s.cfg = cfg;
+        s2s.cfg = cfg;
+        c2s.startListening();
+        s2s.startListening();
+
         process.on('message', function(data){
             if (data.messageType!=null) {
                 switch (data.messageType) {
-                    case "c2sWorker": {
-                        c2s.dbWrapper.callbackHashTable["c2sWorker"+data.payload.reqID](data.payload);
-                    } break;
-                    case "s2sWorker": {
-                        s2s.dbWrapper.callbackHashTable["s2sWorker"+data.payload.reqID](data.payload);
-                    } break;
-                    case "flush": {
-                        c2s.dbWrapper.chatHistory.length = 0;
-                    } break;
                     case "killWorker": {
                         cluster.worker.kill();
-                    } break;
-                    case "c2sWorkerChatSend": {
-                        for (var i = 0; i < data.payload.length; i++) {
-                            if (i===0 && c2s.dbWrapper.chatHistory.length===0) {
-                                c2s.dbWrapper.chatHistoryFirstID = data.payload[i].$loki;
-                            }
-                            c2s.dbWrapper.chatHistory.push(data.payload[i]);
-                        }
-                        for (var key in c2s.dbWrapper.pullRequestHashTable) {
-                            var identifier = key;
-                            async.setImmediate(c2s.dbWrapper.pullRequestHashTable[identifier].fun);
-                        }
                     } break;
                 }
             }
         });
-        c2s.dbWrapper = {
-            chatHistory:[],
-            callbackHashTable:{},
-            pullRequestHashTable:{},
-            chatHistoryFirstID:1
-        };
-        s2s.dbWrapper = {
-            callbackHashTable:{}
-        };
-        c2s.cfg = cfg;
-        s2s.cfg = cfg;
     }
     return module.exports;
 };

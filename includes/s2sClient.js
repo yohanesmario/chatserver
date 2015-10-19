@@ -10,6 +10,7 @@ var xmlBuilder = new xml2js.Builder();
 var s2sClient = {
     dbWrapper:null,
     cfg:null,
+
     post: function(host, port, data, success, error){
         var options = {
             hostname: host,
@@ -41,6 +42,7 @@ var s2sClient = {
         req.write(data);
         req.end();
     },
+
     initConnection: function(cfg, cb){
         s2sClient.listRegisteredServer(cfg.serverHook.ip, cfg.serverHook.port, function(result){
             parseString(result, function(err, data){
@@ -164,6 +166,7 @@ var s2sClient = {
             });
         });
     },
+
     listRegisteredServer: function(host, port, cb){
         s2sClient.post(host, port, xmlBuilder.buildObject({
             request:{
@@ -174,6 +177,7 @@ var s2sClient = {
             logWrapper.log('problem with request: ' + e.message);
         });
     },
+
     registerServer:function(host, port, hash, cb, errorCB){
         var ipPort = host+":"+port;
         s2sClient.dbWrapper.servers.insert({
@@ -210,6 +214,7 @@ var s2sClient = {
             }
         });
     },
+
     loginServer:function(host, port, cb, errorCB){
         var data = xmlBuilder.buildObject({
             request:{
@@ -232,6 +237,7 @@ var s2sClient = {
             }
         });
     },
+
     serverHeartbeat:function(host, port, sessid, cb){
         var data = xmlBuilder.buildObject({
             request:{
@@ -248,6 +254,7 @@ var s2sClient = {
             logWrapper.log('problem with request: ' + e.message);
         });
     },
+
     startHeartbeat:function(){
         var beat = function(){
             var srv = s2sClient.dbWrapper.servers.find({"$and":[
@@ -266,6 +273,7 @@ var s2sClient = {
             beat();
         }, 60000);
     },
+
     chatSendClient:function(host, port, message, cb){
         var data = xmlBuilder.buildObject({
             request:{
@@ -284,6 +292,7 @@ var s2sClient = {
             logWrapper.log('problem with request: ' + e.message);
         });
     },
+
     loginClient:function(username, csessid, cb){
         var srv = s2sClient.dbWrapper.servers.find({"$and":[
             {"loggedIn":true},
@@ -309,6 +318,7 @@ var s2sClient = {
             s2sClient.post(srv[i].ip, srv[i].port, data, cb, errorHandler);
         }
     },
+
     logoutClient:function(csessid, cb){
         var srv = s2sClient.dbWrapper.servers.find({"$and":[
             {"loggedIn":true},
@@ -333,6 +343,7 @@ var s2sClient = {
             s2sClient.post(srv[i].ip, srv[i].port, data, cb, errorHandler);
         }
     },
+
     registerClient:function(username, hash, cb){
         var srv = s2sClient.dbWrapper.servers.find({"$and":[
             {"loggedIn":true},
@@ -358,6 +369,7 @@ var s2sClient = {
             s2sClient.post(srv[i].ip, srv[i].port, data, cb, errorHandler);
         }
     },
+    
     logoutServer:function(cb, error){
         var srv = s2sClient.dbWrapper.servers.find({"$and":[
             {"loggedIn":true},
