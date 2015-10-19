@@ -1,3 +1,6 @@
+# App specific .gitignore
+*.db.json
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
