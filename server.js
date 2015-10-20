@@ -1,10 +1,9 @@
 'use strict';
 
-var include = require('include');
-var cluster = include('cluster');
+var cluster = require('cluster');
 
 if (cluster.isMaster) {
-    include('app.server.serverMaster');
+    require('app/server/serverMaster');
 } else {
-    include('app.server.serverWorker');
+    require('app/server/serverWorker');
 }
