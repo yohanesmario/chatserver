@@ -8,7 +8,7 @@ var fs = include('fs');
 var cluster = include('cluster');
 var prompt = include('prompt');
 var async = include('async');
-var s2sClient = include('app.s2s.s2sClient');
+var s2sClient = null;
 prompt.start();
 prompt.colors = false;
 prompt.message = "";

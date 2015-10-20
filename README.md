@@ -10,7 +10,7 @@ Aplikasi chat multi-server ini dibuat dalam rangka memenuhi tugas mata kuliah SA
 
 Seluruh dokumen yang berkaitan dengan tugas ini dapat dilihat pada folder `/docs`.
 
-File config berada pada folder `/cfg`. Cara penggunaannya dapat dilihat pada dokumen tugas.
+File config berada pada folder root directory. Cara penggunaannya dapat dilihat pada dokumen tugas.
 
 Cara mengaktifkan server adalah dengan menjalankan perintah:
 
