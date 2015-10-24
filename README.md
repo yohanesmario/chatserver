@@ -6,14 +6,27 @@ Kontributor:
 * Aswin Sebastian Hanes (2011730059)
 * Reanta Indra Putra Pratama (2011730079)
 
-Aplikasi chat multi-server ini dibuat dalam rangka memenuhi tugas mata kuliah SAT (2015-1).
+Dependency:
+* Node.js (https://nodejs.org)
 
-Seluruh dokumen yang berkaitan dengan tugas ini dapat dilihat pada folder `/docs`.
-
-File config berada pada folder root directory. Cara penggunaannya dapat dilihat pada dokumen tugas.
+Aplikasi chat multi-server ini dibuat dalam rangka memenuhi tugas mata kuliah SAT (2015-1). Seluruh dokumen yang berkaitan dengan tugas ini dapat dilihat pada folder `/docs`. File config berada pada folder root directory (`/`). Cara penggunaannya dapat dilihat pada dokumen tugas.
 
 Cara mengaktifkan server adalah dengan menjalankan perintah:
 
     node server.js serverX.cfg
 
 X adalah nomor server. Penjelasan lebih lanjut dapat dibaca di dokumen tugas.
+
+TO-DO:
+ - [ ] Telnet c2s. `/node_modules/app/c2s/telnetServer.js`
+    - [x] login
+    - [x] logout
+    - [x] chatPull (beda algoritma dengan http)
+    - [ ] chatSend
+    - [ ] chatGet
+    - [ ] register
+ - [ ] Telnet port. (still hardcoded: port 2337)
+ - [ ] Multiple serverHook. (priority based)
+ - [ ] Dedicated connection for s2s (using 'net' api).
+
+Aplikasi server berada pada direktori `/node_modules/app`, dan aplikasi client berada pada direktori `/webroot`. Aplikasi client dapat dibuka menggunakan browser pada `http://ip:port`.
