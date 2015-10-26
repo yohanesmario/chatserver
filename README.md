@@ -26,7 +26,7 @@ TO-DO:
     - [x] chatGet
     - [x] register
  - [x] Telnet port. (look at server1.cfg)
- - [ ] Multiple serverHook. (priority based)
- - [ ] Dedicated connection for s2s (using 'net' api).
+ - [x] Multiple serverHook. (priority based)
+ - [ ] Dedicated connection for s2s (using 'net' api). [not feasible]
 
 Aplikasi server berada pada direktori `/node_modules/app`, dan aplikasi client berada pada direktori `/webroot`. Aplikasi client dapat dibuka menggunakan browser pada `http://ip:port`.
