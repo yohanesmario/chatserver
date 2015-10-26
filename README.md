@@ -25,7 +25,7 @@ TO-DO:
     - [x] chatSend
     - [x] chatGet
     - [x] register
- - [ ] Telnet port. (still hardcoded: port 2337)
+ - [x] Telnet port. (look at server1.cfg)
  - [ ] Multiple serverHook. (priority based)
  - [ ] Dedicated connection for s2s (using 'net' api).
 
