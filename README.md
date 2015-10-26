@@ -18,13 +18,13 @@ Cara mengaktifkan server adalah dengan menjalankan perintah:
 X adalah nomor server. Penjelasan lebih lanjut dapat dibaca di dokumen tugas.
 
 TO-DO:
- - [ ] Telnet c2s. `/node_modules/app/c2s/telnetServer.js`
+ - [x] Telnet c2s. `/node_modules/app/c2s/telnetServer.js`
     - [x] login
     - [x] logout
     - [x] chatPull (beda algoritma dengan http)
-    - [ ] chatSend
-    - [ ] chatGet
-    - [ ] register
+    - [x] chatSend
+    - [x] chatGet
+    - [x] register
  - [ ] Telnet port. (still hardcoded: port 2337)
  - [ ] Multiple serverHook. (priority based)
  - [ ] Dedicated connection for s2s (using 'net' api).
