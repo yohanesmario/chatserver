@@ -27,7 +27,7 @@ TO-DO:
     - [x] register
  - [x] Telnet port. (look at server1.cfg)
  - [x] Multiple serverHook. (priority based)
- - [ ] Autosave serverHooks from registered servers.
+ - [x] Autosave serverHooks from registered servers.
  - [ ] Dedicated connection for s2s (using 'net' api). [not feasible]
 
 Aplikasi server berada pada direktori `/node_modules/app`, dan aplikasi client berada pada direktori `/webroot`. Aplikasi client dapat dibuka menggunakan browser pada `http://ip:port`.
