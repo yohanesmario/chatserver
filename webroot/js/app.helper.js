@@ -38,6 +38,13 @@ var appHelper = {
                         '<param lastID="' + appHelper.escapeHTML(lastID) + '" />' +
                     '</request>';
         },
+        loggedInUserPull:function(lastHash){
+            return  '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+                    '<request type="c2s">' +
+                        '<method>loggedInUserPull</method>' +
+                        '<param lastHash="' + appHelper.escapeHTML(lastHash) + '" />' +
+                    '</request>';
+        },
         "heartbeat":function(sessid){
             return  '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
                     '<request type="c2s">' +

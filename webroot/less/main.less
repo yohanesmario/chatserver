@@ -3,6 +3,48 @@
 @import "../bootstrap/less/bootstrap.less";
 @import "../bootstrap/less/theme.less";
 
+.login-user {
+    display:block;
+    padding:10px 0px 10px 0px;
+    height:60px;
+    background-color:white;
+    overflow:hidden;
+
+    .container {
+        position:relative;
+    }
+
+    .inner-container {
+        display:block;
+        overflow:hidden;
+        float:left;
+        width:~"calc(100% - 80px)";
+        box-sizing:border-box;
+    }
+
+    .inner-inner-container {
+        overflow-x:scroll;
+        white-space:nowrap;
+        height:100px;
+    }
+
+    .loggedin-user-title {
+        display:block;
+        padding:10px 5px 5px 0px;
+        float:left;
+        width:80px;
+        box-sizing:border-box;
+    }
+    .loggedin-user {
+        display:inline-block;
+        padding:5px 10px;
+        margin:5px;
+        background-color:@brand-success;
+        color:white;
+        border-radius:6px;
+    }
+}
+
 .chat-header {
     margin-top:0px;
     margin-bottom:0px;
@@ -48,23 +90,23 @@
 }
 
 .chat-history {
+    margin-top:0px;
+
     @media (max-width: @screen-sm-max) {
-        margin-top:160px;
+        margin-top:160px+60px;
     }
 
     @media (min-width: @screen-md-min) {
-        margin-top:200px;
+        margin-top:200px+60px;
     }
 }
 
 .chat-message {
     max-width:100%;
 
-    &, &-sender, &-body {
-        width: intrinsic;           /* Safari/WebKit uses a non-standard name */
-        width: -moz-max-content;    /* Firefox/Gecko */
-        width: -webkit-max-content; /* Chrome */
-    }
+    width: intrinsic;           /* Safari/WebKit uses a non-standard name */
+    width: -moz-max-content;    /* Firefox/Gecko */
+    width: -webkit-max-content; /* Chrome */
 
     &-left {
         margin-left:0px;
@@ -74,6 +116,10 @@
     &-right {
         margin-left:auto;
         margin-right:0px;
+    }
+
+    .displayed-date {
+        margin-left:20px;
     }
 }
 
