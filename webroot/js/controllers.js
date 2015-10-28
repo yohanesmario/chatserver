@@ -145,7 +145,9 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
     $scope.heartRate = 5000;
     $scope.heartRateFail = 1000;
     $scope.messages = [];
+    $scope.users = [];
     $scope.lastID = -1;
+    $scope.lastHash = 0;
     $scope.canceler = $q.defer();
 
     $scope.chatPull = function(){
@@ -179,7 +181,8 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
                                 "position":((thisMsg.attr("username")==$scope.username)?"right":"left"),
                                 "color":((thisMsg.attr("username")==$scope.username)?"primary":"default"),
                                 "time":parseInt(thisMsg.attr("time")),
-                                "displayedTime":$filter('date')(parseInt(thisMsg.attr("time")), 'hh:mm a (MMMM dd, yyyy)'),
+                                "displayedTime":$filter('date')(parseInt(thisMsg.attr("time")), 'hh:mm a'),
+                                "displayedDate":$filter('date')(parseInt(thisMsg.attr("time")), 'MMMM dd, yyyy'),
                                 "timezone":"Timezone offset: " + $filter('date')(parseInt(thisMsg.attr("time")), 'Z'),
                                 "body":thisMsg.attr("message")
                             });
@@ -211,6 +214,65 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
     };
 
     $scope.chatPull();
+
+    $scope.loggedInUserPull = function(){
+        if ($location.url()=="/chatroom") {
+            var data = appHelper.createXML.loggedInUserPull($scope.lastHash);
+
+            $http.post("/"+Date.now(), data, {timeout: $scope.canceler.promise}).then(function(response){
+                var responseData = $(response.data);
+                var status = responseData.find("status").text();
+                var statusCode = responseData.find("status-code").text();
+                var message = null;
+                if (statusCode!=null) {
+                    statusCode = parseInt(statusCode);
+                    if (statusCode!=1) {
+                        message = responseData.find("message").text();
+                    }
+                }
+
+                if (statusCode==1) {
+                    $scope.connectionStatus = "online";
+                    // display messages
+                    if ($scope.lastHash==parseInt(responseData.find("lastHash").text())) {
+                        // No new messages
+                    } else {
+                        $scope.lastHash=responseData.find("lastHash").text();
+                        var usersData = responseData.find("user");
+                        $scope.users.splice(0, $scope.users.length);
+                        for (var i = 0; i < usersData.length; i++) {
+                            var thisUsr = $(usersData[i]);
+                            $scope.users.push(
+                                {"username":thisUsr.attr("username")}
+                            );
+                        }
+                    }
+                } else {
+                    $scope.connectionStatus = "offline";
+
+                    if (message!=null) {
+                        // Display warning
+                        console.error("[LOGGED-IN USER PULL]" + message);
+                    } else {
+                        // Display unknown error
+                        console.error("[LOGGED-IN USER PULL] Unknown error!");
+                    }
+                }
+
+                $timeout(function(){
+                    $scope.loggedInUserPull();
+                },$scope.refreshRate);
+            }, function(response) {
+                $scope.connectionStatus = "offline";
+
+                $timeout(function(){
+                    $scope.loggedInUserPull();
+                },$scope.refreshRateFail);
+            });
+        }
+    };
+
+    $scope.loggedInUserPull();
 
     $scope.heartbeat = function(){
         if ($location.url()=="/chatroom") {

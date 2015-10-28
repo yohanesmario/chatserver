@@ -36,17 +36,36 @@
             </form>
         </div>
     </div>
+    <div class="login-user">
+        <div class="container">
+            <span class="loggedin-user-title">
+                Logged-in:
+            </span>
+            <div class="inner-container">
+                <div class="inner-inner-container">
+                    <span class="loggedin-user" ng-repeat="user in users">{{user.username}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="container">
     <div class="chat-history">
         <div class="panel panel-{{message.color}} chat-message chat-message-{{message.position}}" ng-repeat="message in messages | orderBy:'-time'">
             <div class="panel-heading chat-message-sender">
                 <strong>{{message.sender}}</strong>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <span class="pull-right" title="{{message.timezone}}"><small><small>{{message.displayedTime}}</small></small></span>
             </div>
             <div class="panel-body chat-message-body">
                 {{message.body}}
+            </div>
+            <div class="panel-footer" title="{{message.timezone}}">
+                <span class="pull-left">
+                    <small><small>{{message.displayedTime}}</small></small>
+                </span>
+                <span class="pull-right displayed-date">
+                    <small><small>{{message.displayedDate}}</small></small>
+                </span>
+                <div class="clearfix"></div>
             </div>
         </div>
     </div>
