@@ -73,7 +73,7 @@
     "devel"         : false,     // Development/debugging (alert, confirm, etc)
     "dojo"          : false,    // Dojo Toolkit
     "jasmine"       : false,    // Jasmine
-    "jquery"        : false,    // jQuery
+    "jquery"        : true,    // jQuery
     "mocha"         : false,     // Mocha
     "mootools"      : false,    // MooTools
     "node"          : true,    // Node.js
@@ -89,5 +89,9 @@
     "yui"           : false,    // Yahoo User Interface
 
     // Custom Globals
-    "globals"       : {}        // additional predefined global variables
+    "globals"       : {
+        "appHelper":true,
+        "angular":true,
+        "async":true
+    }
 }
