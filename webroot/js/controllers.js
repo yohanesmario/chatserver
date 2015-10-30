@@ -22,13 +22,12 @@ function ($scope, $http, $cookies, $location) {
         var data = appHelper.createXML.login($scope.username, $scope.password);
         $http.post("/", data).then(function(response){
             var responseData = $(response.data);
-            var status = responseData.find("status").text();
             var statusCode = responseData.find("status-code").text();
             var sessid = null;
             var message = null;
             if (statusCode!=null) {
                 statusCode = parseInt(statusCode);
-                if (statusCode==1) {
+                if (statusCode===1) {
                     sessid = responseData.find("sessid").text();
                 } else {
                     message = responseData.find("message").text();
@@ -49,7 +48,7 @@ function ($scope, $http, $cookies, $location) {
                 // Display unknown error
                 $scope.addAlert("danger", "Unknown error!");
             }
-        }, function(response){
+        }, function(){
             $scope.addAlert("danger", "Connection error!");
         });
     };
@@ -77,12 +76,11 @@ function($scope, $http, $cookies, $location) {
         var data = appHelper.createXML.register($scope.username, $scope.password);
         $http.post("/", data).then(function(response){
             var responseData = $(response.data);
-            var status = responseData.find("status").text();
             var statusCode = responseData.find("status-code").text();
             var message = null;
             if (statusCode!=null) {
                 statusCode = parseInt(statusCode);
-                if (statusCode!=1) {
+                if (statusCode!==1) {
                     message = responseData.find("message").text();
                 }
             }
@@ -90,7 +88,7 @@ function($scope, $http, $cookies, $location) {
             if (statusCode===1) {
                 // Display success
                 $scope.addAlert("success", "User \""+appHelper.escapeHTML($scope.username)+"\" has been successfully registered.");
-            } else if (statusCode!=null && statusCode!=1 && message!=null) {
+            } else if (statusCode!=null && statusCode!==1 && message!=null) {
                 // Display warning
                 $scope.addAlert("warning", message);
             } else {
@@ -111,6 +109,12 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
     }
 
     $scope.animationsEnabled = true;
+
+    var randomizer = {
+        "chatPull":Date.now(),
+        "loggedInUserPull":Date.now()+1,
+        "heartbeat":Date.now()+2,
+    };
 
     $scope.open = function (size, message) {
         $scope.alertMessage = message;
@@ -151,25 +155,24 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
     $scope.canceler = $q.defer();
 
     $scope.chatPull = function(){
-        if ($location.url()=="/chatroom") {
+        if ($location.url()==="/chatroom") {
             var data = appHelper.createXML.chatPull($scope.lastID);
 
-            $http.post("/"+Date.now(), data, {timeout: $scope.canceler.promise}).then(function(response){
+            $http.post("/"+randomizer.chatPull, data, {timeout: $scope.canceler.promise}).then(function(response){
                 var responseData = $(response.data);
-                var status = responseData.find("status").text();
                 var statusCode = responseData.find("status-code").text();
                 var message = null;
                 if (statusCode!=null) {
                     statusCode = parseInt(statusCode);
-                    if (statusCode!=1) {
+                    if (statusCode!==1) {
                         message = responseData.find("message").text();
                     }
                 }
 
-                if (statusCode==1) {
+                if (statusCode===1) {
                     $scope.connectionStatus = "online";
                     // display messages
-                    if ($scope.lastID==parseInt(responseData.find("lastID").text())) {
+                    if ($scope.lastID===parseInt(responseData.find("lastID").text())) {
                         // No new messages
                     } else {
                         $scope.lastID=parseInt(responseData.find("lastID").text());
@@ -178,8 +181,8 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
                             var thisMsg = $(messagesData[i]);
                             $scope.messages.push({
                                 "sender":thisMsg.attr("username"),
-                                "position":((thisMsg.attr("username")==$scope.username)?"right":"left"),
-                                "color":((thisMsg.attr("username")==$scope.username)?"primary":"default"),
+                                "position":((thisMsg.attr("username")===$scope.username)?"right":"left"),
+                                "color":((thisMsg.attr("username")===$scope.username)?"primary":"default"),
                                 "time":parseInt(thisMsg.attr("time")),
                                 "displayedTime":$filter('date')(parseInt(thisMsg.attr("time")), 'hh:mm a'),
                                 "displayedDate":$filter('date')(parseInt(thisMsg.attr("time")), 'MMMM dd, yyyy'),
@@ -203,7 +206,7 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
                 $timeout(function(){
                     $scope.chatPull();
                 },$scope.refreshRate);
-            }, function(response) {
+            }, function() {
                 $scope.connectionStatus = "offline";
 
                 $timeout(function(){
@@ -216,25 +219,24 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
     $scope.chatPull();
 
     $scope.loggedInUserPull = function(){
-        if ($location.url()=="/chatroom") {
+        if ($location.url()==="/chatroom") {
             var data = appHelper.createXML.loggedInUserPull($scope.lastHash);
 
-            $http.post("/"+Date.now(), data, {timeout: $scope.canceler.promise}).then(function(response){
+            $http.post("/"+randomizer.loggedInUserPull, data, {timeout: $scope.canceler.promise}).then(function(response){
                 var responseData = $(response.data);
-                var status = responseData.find("status").text();
                 var statusCode = responseData.find("status-code").text();
                 var message = null;
                 if (statusCode!=null) {
                     statusCode = parseInt(statusCode);
-                    if (statusCode!=1) {
+                    if (statusCode!==1) {
                         message = responseData.find("message").text();
                     }
                 }
 
-                if (statusCode==1) {
+                if (statusCode===1) {
                     $scope.connectionStatus = "online";
                     // display messages
-                    if ($scope.lastHash==parseInt(responseData.find("lastHash").text())) {
+                    if ($scope.lastHash+""===responseData.find("lastHash").text()) {
                         // No new messages
                     } else {
                         $scope.lastHash=responseData.find("lastHash").text();
@@ -262,7 +264,7 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
                 $timeout(function(){
                     $scope.loggedInUserPull();
                 },$scope.refreshRate);
-            }, function(response) {
+            }, function() {
                 $scope.connectionStatus = "offline";
 
                 $timeout(function(){
@@ -275,28 +277,27 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
     $scope.loggedInUserPull();
 
     $scope.heartbeat = function(){
-        if ($location.url()=="/chatroom") {
+        if ($location.url()==="/chatroom") {
             var data = appHelper.createXML.heartbeat(appHelper.getSessionID($cookies));
-            $http.post("/", data).then(function(response){
+            $http.post("/"+randomizer.heartbeat, data).then(function(response){
                 var responseData = $(response.data);
-                var status = responseData.find("status").text();
                 var statusCode = responseData.find("status-code").text();
                 var message = null;
                 if (statusCode!=null) {
                     statusCode = parseInt(statusCode);
-                    if (statusCode!=1) {
+                    if (statusCode!==1) {
                         message = responseData.find("message").text();
                     }
                 }
 
-                if (statusCode==1) {
+                if (statusCode===1) {
                     // display messages
                     $scope.connectionStatus = "online";
                 } else if (message!=null) {
                     // Display warning
                     console.error("[HEARTBEAT] " + message);
 
-                    if (statusCode==3) {
+                    if (statusCode===3) {
                         // Session expired. Logout immediately.
                         $scope.logoutButton();
                     }
@@ -308,7 +309,7 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
                 $timeout(function(){
                     $scope.heartbeat();
                 },$scope.heartRate);
-            }, function(response){
+            }, function(){
                 $scope.connectionStatus = "offline";
 
                 $timeout(function(){
@@ -324,17 +325,16 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
         var data = appHelper.createXML.logout(appHelper.getSessionID($cookies));
         $http.post("/", data).then(function(response){
             var responseData = $(response.data);
-            var status = responseData.find("status").text();
             var statusCode = responseData.find("status-code").text();
             var message = null;
             if (statusCode!=null) {
                 statusCode = parseInt(statusCode);
-                if (statusCode!=1) {
+                if (statusCode!==1) {
                     message = responseData.find("message").text();
                 }
             }
 
-            if (statusCode==1) {
+            if (statusCode===1) {
                 // Logout
             } else if (message!=null) {
                 // Display warning
@@ -349,7 +349,7 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
                 appHelper.setLoggedIn($cookies, false);
                 $location.url("/");
             }
-        }, function(response){
+        }, function(){
             $scope.open("sm", "Connection error!");
         });
     };
@@ -361,17 +361,16 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
         $("#submitDisabled").prop('disabled', true);
         $http.post("/", data).then(function(response){
             var responseData = $(response.data);
-            var status = responseData.find("status").text();
             var statusCode = responseData.find("status-code").text();
             var message = null;
             if (statusCode!=null) {
                 statusCode = parseInt(statusCode);
-                if (statusCode!=1) {
+                if (statusCode!==1) {
                     message = responseData.find("message").text();
                 }
             }
 
-            if (statusCode==1) {
+            if (statusCode===1) {
                 // Refresh timeline on demand
                 $scope.draft = "";
                 $scope.placeholder = "Type your message...";
@@ -379,9 +378,15 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
             } else if (message!=null) {
                 // Display warning
                 $scope.open("sm", message);
+                $scope.draft = "";
+                $scope.placeholder = "Type your message...";
+                $("#submitDisabled").prop('disabled', false).focus();
             } else {
                 // Display unknown error
                 $scope.open("sm", "Unknown error!");
+                $scope.draft = "";
+                $scope.placeholder = "Type your message...";
+                $("#submitDisabled").prop('disabled', false).focus();
             }
 
             if (cb!=null) {
@@ -389,8 +394,11 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
                     cb();
                 });
             }
-        }, function(response) {
+        }, function() {
             $scope.open("sm", "Connection error!");
+            $scope.draft = "";
+            $scope.placeholder = "Type your message...";
+            $("#submitDisabled").prop('disabled', false).focus();
         });
     };
 
@@ -412,7 +420,7 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
 
 }]);
 
-HttpChatController.controller('ModalInstanceCtrl', function ($scope, $modalInstance, items) {
+HttpChatController.controller('ModalInstanceCtrl', function ($scope, $modalInstance) {
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
