@@ -17,17 +17,4 @@ Cara mengaktifkan server adalah dengan menjalankan perintah:
 
 X adalah nomor server. Penjelasan lebih lanjut dapat dibaca di dokumen tugas.
 
-TO-DO:
- - [x] Telnet c2s. `/node_modules/app/c2s/telnetServer.js`
-    - [x] login
-    - [x] logout
-    - [x] chatPull (beda algoritma dengan http)
-    - [x] chatSend
-    - [x] chatGet
-    - [x] register
- - [x] Telnet port. (look at server1.cfg)
- - [x] Multiple serverHook. (priority based)
- - [x] Autosave serverHooks from registered servers.
- - [ ] Dedicated connection for s2s (using 'net' api). [not feasible]
-
 Aplikasi server berada pada direktori `/node_modules/app`, dan aplikasi client berada pada direktori `/webroot`. Aplikasi client dapat dibuka menggunakan browser pada `http://ip:port`.
