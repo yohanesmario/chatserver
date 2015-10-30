@@ -83,3 +83,8 @@ Ada beberapa error message yang akan selalu diawali dengan string `Error:`.
     - Khusus untuk rejected, lanjutkan membaca sampai menemukan `\n` atau `\r\n`. Itu adalah pesan yang dapat ditampilkan ke user.
 3. Periksa apakah pesan diawali oleh `[`.
     - Jika ya, maka pesan tersebut adalah chat message. Parsing chat message dapat dilakukan dengan membuang `[`, lalu melakukan split string pada bagian `] <` dan `>:`.
+
+### TO-DO List Telnet
+
+ - [ ] Tambah perintah `serversubscribe` untuk mendapatkan pesan mengenai registrasi server baru. Digunakan untuk mengupdate list server di client java. Tidak perlu login(?)
+ - [ ] Tambah perintah `listloggedin` untuk mendapatkan list awal siapa saja yang sudah login. Perlu login dahulu.
