@@ -146,7 +146,7 @@ function($scope, $http, $cookies, $location, $timeout, $filter, $modal, $q) {
     $scope.submitDisabled = "";
     $scope.refreshRate = 100; // 1000/10fps = 100
     $scope.refreshRateFail = 2000;
-    $scope.heartRate = 5000;
+    $scope.heartRate = 3000;
     $scope.heartRateFail = 1000;
     $scope.messages = [];
     $scope.users = [];
